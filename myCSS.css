@@ -57,4 +57,7 @@ footer>p#statusInfo{
   text-align:center;
  }
 
-
+video#myV{
+  display: none ;
+  position: absolute ;
+}

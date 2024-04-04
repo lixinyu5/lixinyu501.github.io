@@ -1,13 +1,31 @@
 Plan.responsiveUI() ;
-
-Plan.loadImgOneByOne() ;
+httpLoader.request("myData.json") ;
+setTimeout(function(){
+ //  按httpLoader模型的设计，_textContent存放了获取的文本的字符串
+   if(httpLoader._textContent.length > 1 ){
+       loadData() ;
+     }else{
+     setTimeout(loadData(),3000); //针对极差的网络环境，再给第2次处理调入的数据的机会，若这次还无法调入，则说明用户网络状态无法运行本系统
+    }
+   function loadData(){
+		let s = httpLoader._textContent ;
+		Model.books = JSON.parse(s) ;
+         let imgArr = [] ;
+	  for (let book of Model.books ){
+		imgArr.push(book.bookPage) ;
+	   }
+	  //console.log(imgArr);
+	  Plan.loadImgOneByOne(imgArr) ;
+   }
+ },3000) ; //发出request("myData.json") 后，3s后第一次处理调入的数据
 
  
 
  //不管是鼠标还是触屏，因为有且只有第一次点击，才需要载入第一本书，如何解决这个问题，下面这个代码片段演示了一个高智商的小技巧，
   document.body.onclick =document.body.ontouchstart = function(){
-	$('main').replaceChild(UI.bookFace[0],$('bookFace')) ;
+	UI.log($('book'), Model.books[0].name);
 	
+	$('main').replaceChild(UI.bookFace[0],$('bookFace')) ;
 	$('bookFace').style.opacity = 0 ;
 	setTimeout(function(){
 		$('bookFace').style.opacity = 0.9 ;
@@ -126,3 +144,33 @@ Plan.loadImgOneByOne() ;
 		    $('bookFace').style.left =  touch.deltaX + 'px' ;
 		  }
        }); //$('main').addEventListener("touchmove", ...
+
+	   $('chapter').addEventListener("click",  function (e){
+		e.preventDefault();
+		let book = Model.books[Model.bookIndex] ;
+		if(book.type === 'video'){ //此处原来的重要bug，=== 误写为 = ，由于语法没有错，但逻辑巨大的问题，导致程序响应book类型不是视频的所有交互。
+          let videos = book ;
+		  let i = parseInt(videos.files.length * Math.random( )) ;
+		  UI.log($('book'),"播放NO."+(i+1)+" / "+videos.files.length+"号视频！") ;
+          
+		  //console.log(videos) ;
+	      $('myV').style.display = 'block' ;
+		  $('myV').src = videos.URL + videos.files[i] ;
+		  $('myV').addEventListener('loadedmetadata',function(){
+		    let m = Math.floor(this.duration/60) ;
+			let s = Math.ceil(this.duration - parseInt(this.duration/60)*60) ;
+			let bak = $('statusInfo').textContent ;
+			UI.log($('statusInfo'),'本视频长度为: '+ m +' 分钟 '+ s + ' 秒 ！');
+			setTimeout(() => {
+				UI.log($('statusInfo'), bak) ; 
+			}, 20000);
+		  });
+		  $('myV').addEventListener('canplaythrough',function(){
+		   this.style.width = UI.deviceWidth + 'px' ;
+           this.play() ;
+            setTimeout(() => {
+				$('bookFace').style.display = 'none' ;
+			}, 100);
+		  });
+     	} // 处理视频这本书
+   }); //$('chapter').addEventListener("click" 。。。
