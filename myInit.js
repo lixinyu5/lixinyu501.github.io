@@ -12,14 +12,29 @@ var Model = {} ;
 	Model.books = [] ;
   Model.bookIndex = 0 ;
 	Model.prevBook = function(){
-			if(Model.bookIndex > 0){
+      if(UI.bookFace.length < Model.books.length){
+         UI.log($('book'),'书没下载完，等会儿！') ;
+        setTimeout(function(){
+          UI.log($('book'),'计算思维系列课程@masterLijh') ; 
+        },2000);
+        return ;
+      }
+     if(Model.bookIndex > 0){
 				Model.bookIndex -- ;
 			}else{
 				Model.bookIndex = Model.books.length -1
 			}
       UI.log($('book'), Model.books[Model.bookIndex].name);
 		 };
+     
 		Model.nextBook = function (){
+      if(UI.bookFace.length < Model.books.length){
+        UI.log($('book'),'书没下载完，等会儿！') ;
+        setTimeout(function(){
+          UI.log($('book'),'计算思维系列课程@masterLijh') ; 
+        },2000);
+        return ;
+      }
 			if(Model.bookIndex < Model.books.length -1 ){
 				Model.bookIndex ++ ;
 			}else{
@@ -61,11 +76,11 @@ var Plan = {} ;
      
         img.addEventListener('load', function(){ 
           UI.bookFace.push(this) ;
-          console.log(imgArr[Model.bookIndex] + ' has loaded!') ;
-          if ( Model.bookIndex < imgArr.length - 1 ){  //此处修改了以前逻辑的bug
+         if ( Model.bookIndex < imgArr.length - 1 ){  //此处修改了以前逻辑的bug
            Model.bookIndex ++ ;
            Plan.loadImgOneByOne(imgArr);
           }
+         UI.log($('statusInfo'), imgArr[Model.bookIndex] + ' has loaded!')
           } );  //img.addEventListener('load'。。。
        }//Plan.loadImgOneByOne
 

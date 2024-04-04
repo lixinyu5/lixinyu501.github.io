@@ -165,6 +165,7 @@ setTimeout(function(){
 				UI.log($('statusInfo'), bak) ; 
 			}, 20000);
 		  });
+		  /*
 		  $('myV').addEventListener('canplaythrough',function(){
 		   this.style.width = UI.deviceWidth + 'px' ;
            this.play() ;
@@ -172,5 +173,15 @@ setTimeout(function(){
 				$('bookFace').style.display = 'none' ;
 			}, 100);
 		  });
+		  */
+		  $('myV').oncanplaythrough = function(){
+			this.style.width = UI.deviceWidth + 'px' ;
+			this.play() ;
+			 setTimeout(() => {
+				 $('bookFace').style.display = 'none' ;
+			 }, 100);
+			 UI.log($('chapter'),'点击此处刷视频') ;
+		   };
+		   
      	} // 处理视频这本书
    }); //$('chapter').addEventListener("click" 。。。
