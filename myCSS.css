@@ -50,7 +50,12 @@ nav>p#chapter{
  color: white ;
  font-size: 0.9em;
  background-color: rgb(80,30,10) ;
+ cursor: pointer;
 }
+nav>p#chapter:hover{
+  font-size: 1em;
+  background-color: rgb(120,50,10) ;
+  }
 
 footer>p#statusInfo{
   font-size: 0.75em;

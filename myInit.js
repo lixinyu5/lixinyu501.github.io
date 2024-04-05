@@ -1,22 +1,24 @@
 /****
- * 本版程序已经实现以下目标：
- * 1、让代码的架构更加灵活，设计了httpLoader模型，用以实现http协议的外部JSON数据文件的异步加载；
- * 2、设计了12本书用于学习，其中最后一本书设计为视频集，利用外部文件myData.json存放；
- * 3、在myData.json中，初步定义了数据结构，其中的书的类型主要分为audio和video，用type属性区分；
- * 4、在myData.json中，前11本书的具体数据为暂随意设定，作测试用。而最后一本书设计为视频集则包含学校视频服务器内118个Ted视频的URL数据；
- * 5、初步改造了UI，让第四步设计的数据具备功能，实现随机播放视频。
- * 6、在调试中更改了一些切换书的逻辑bug。
+ * 本版程序试图实现以下目标：
+ * 1、完善了程序的逻辑，设计了书的book打开和关闭的概念，并用chapter元素最为UI来实现这个互动；
+ * 2、解决了视频播放的UI控制设计和代码的逻辑问题；
+ * 3、完善了myData.json文件的数据结构，让书分为二种资源，分别是：mp3和mp4；
+ * 4、增加了UI.log方法，为用户的所有互动增加了底部信息的及时反馈。
+ * 5、更正了一些逻辑问题。
  */
 var Model = {} ;
     Model.clock = null ;
 	Model.books = [] ;
   Model.bookIndex = 0 ;
+  Model.bookIsOpen = false ;
+  Model.videoIsPlaying = false ;
 	Model.prevBook = function(){
       if(UI.bookFace.length < Model.books.length){
          UI.log($('book'),'书没下载完，等会儿！') ;
         setTimeout(function(){
           UI.log($('book'),'计算思维系列课程@masterLijh') ; 
         },2000);
+        
         return ;
       }
      if(Model.bookIndex > 0){
@@ -80,7 +82,8 @@ var Plan = {} ;
            Model.bookIndex ++ ;
            Plan.loadImgOneByOne(imgArr);
           }
-         UI.log($('statusInfo'), imgArr[Model.bookIndex] + ' has loaded!')
+          let s = imgArr[Model.bookIndex].slice(0,imgArr[Model.bookIndex].length - 4) ;
+          UI.log($('statusInfo'), '《 '+ s + ' 》'+ ' has been loaded !')
           } );  //img.addEventListener('load'。。。
        }//Plan.loadImgOneByOne
 

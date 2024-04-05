@@ -21,7 +21,7 @@ setTimeout(function(){
 
  
 
- //不管是鼠标还是触屏，因为有且只有第一次点击，才需要载入第一本书，如何解决这个问题，下面这个代码片段演示了一个高智商的小技巧，
+ 
   document.body.onclick =document.body.ontouchstart = function(){
 	UI.log($('book'), Model.books[0].name);
 	
@@ -88,7 +88,7 @@ setTimeout(function(){
    }) ;       //'main'.addEventListener("mouseup")
 
 
-//1、本次代码提交完成了触屏模型的模拟，当前代码设置对main元素（展示当前书的功能）有效。通过建立Model.touch模型，目前仅关注触摸对x轴方向的触摸，实现了不同书的切换。2、研究了基于Web浏览器触屏的三个底层事件：touchstart、touchmove、touchend，结合DOM技术设计了一个可以滑动触屏控制书图案左右移动的UI，该UI流畅地实现了书的切换；2、用户用触屏操作的动作细节包括：接触，移动，抬起，触摸的距离，通过逻辑综合判断这些因素，本片段代码设计了一个可行算法，判断了有效触摸，杜绝了无效触摸(无意触摸等较小的距离)，也实现了左右方向触摸的判断，展现了一个逻辑清晰，简洁的换书的GUI模型，3、最后，本例利用CSS动画开关设置，结合JS的异步代码，创作了一个有流畅动画效果的触屏专用UI。
+
 //------触屏模型定义和处理函数---------
     Model.touch = {
 	target: null ,
@@ -145,17 +145,29 @@ setTimeout(function(){
 		  }
        }); //$('main').addEventListener("touchmove", ...
 
+	
+	
+	   //打开书的后续代码，写在下面
 	   $('chapter').addEventListener("click",  function (e){
 		e.preventDefault();
+		if( !Model.bookIsOpen){
+		 setTimeout(() => {
+			$('bookFace').style.display = 'none' ;
+			$('chapter').textContent = "->关闭这本书" ;
+		 }, 200);
+
 		let book = Model.books[Model.bookIndex] ;
+		Model.bookIsOpen = true ;
+
 		if(book.type === 'video'){ //此处原来的重要bug，=== 误写为 = ，由于语法没有错，但逻辑巨大的问题，导致程序响应book类型不是视频的所有交互。
           let videos = book ;
 		  let i = parseInt(videos.files.length * Math.random( )) ;
 		  UI.log($('book'),"播放NO."+(i+1)+" / "+videos.files.length+"号视频！") ;
           
 		  //console.log(videos) ;
-	      $('myV').style.display = 'block' ;
+	      
 		  $('myV').src = videos.URL + videos.files[i] ;
+		  $('myV').style.display = 'block' ;
 		  $('myV').addEventListener('loadedmetadata',function(){
 		    let m = Math.floor(this.duration/60) ;
 			let s = Math.ceil(this.duration - parseInt(this.duration/60)*60) ;
@@ -164,24 +176,50 @@ setTimeout(function(){
 			setTimeout(() => {
 				UI.log($('statusInfo'), bak) ; 
 			}, 20000);
+
 		  });
-		  /*
+		 // 经测试，这几年的发布的移动浏览器为了节省用户流量，都不支持代码控制的play方法，必须设法把play放到用户交互事件之中
 		  $('myV').addEventListener('canplaythrough',function(){
-		   this.style.width = UI.deviceWidth + 'px' ;
-           this.play() ;
-            setTimeout(() => {
-				$('bookFace').style.display = 'none' ;
-			}, 100);
+			UI.log($('statusInfo'), '读取视频完成，点击主区域播放！');
+		    $('myV').onclick = $('myV').ontouchstart = function(){
+			 if(book.type === 'video'){
+			  if(!Model.videoIsPlaying){
+			   $('myV').play() ;
+				Model.videoIsPlaying = true;
+				UI.log($('statusInfo'),  '视频正在播放，可点击它可以暂停！');
+         	  }else{
+				$('myV').pause() ;
+				Model.videoIsPlaying = false;
+				UI.log($('statusInfo'),  '视频已经暂停，可点击它可继续播放！');
+			  }
+			 }
+	       } ; //用户确定播放/暂停视频
+		    this.style.width = UI.deviceWidth + 'px' ;
+			if( Model.clock){
+			 clearInterval(Model.clock) ; //既然能播放了，则清楚下面不断反馈的“耐心等待”
+			 Model.clock = null ;
+			}
 		  });
-		  */
-		  $('myV').oncanplaythrough = function(){
-			this.style.width = UI.deviceWidth + 'px' ;
-			this.play() ;
-			 setTimeout(() => {
-				 $('bookFace').style.display = 'none' ;
-			 }, 100);
-			 UI.log($('chapter'),'点击此处刷视频') ;
-		   };
-		   
-     	} // 处理视频这本书
-   }); //$('chapter').addEventListener("click" 。。。
+
+		  //实际上对于低速网络环境，上面反馈需要大量的等待时间，代码此时需要给用户积极反馈
+		   Model.clock = setInterval(() => {
+			    UI.log($('statusInfo'), parseInt(Math.random()*100) + '视频数据正在加载，请耐心等待！');
+		       }, 2000);
+		  
+	  } // 处理视频组成的书
+
+	} else//end if !Model.bookIsOpen
+	      {
+			setTimeout(() => {
+				$('bookFace').style.display = 'block' ;
+				$('chapter').textContent = "->打开这本书" ;
+			 }, 200);
+			Model.bookIsOpen = false ;
+			$('myV').src = "" ;
+			$('myV').style.display = 'none' ;
+			
+			setTimeout(function(){
+				UI.log($('statusInfo'), " CopyRight from 李健宏 江西科技师范大学 2022--2025" );
+			},5000);
+		  } //end  if Model.bookIsOpen
+   },true); //$('chapter').addEventListener("click" 。。。 最后这个true参数很重要，让该click事件不再传递到父元素main上
