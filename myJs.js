@@ -148,91 +148,129 @@ setTimeout(function(){
 	
 	
 /****
- * 上一版本版程序发现有2个问题亟待解决：
- * 1、尽管运行在桌面端模拟移动设备时，视频打开完全没有问题，但传入服务器后，在真实移动端测试视频可以获取元数据信息，但不可打开，无法播放；
- * 2、代表书的音频，其数据结构已经通过了语法分析，但在“打开书”后没有任何UI出现，会对用户理解"打开书"的概念造成困扰；
- * 本版试图解决上面二个问题：
- * 1、针对第1点问题，分析其原因为：可能移动端阻止了视频数据，导致视频对象myV无法具备外形，造成点击打开的代码逻辑无效；
- * 2、针对上述第1点分析，本版将尝试引入一个播放工具栏，让播放/暂停的控制直接交给用户，这样或许可以化解移动端的保护流量策略造成的问题，同时视频的时间信息都显示在上面；
- * 3、针对第2点问题，增加UI.showMenu方法，为用户的“打开书”的操作，提供当前音频的内容及时反馈。
- * 4、最后，本版代码还要部署新增工具栏和菜单的UI部件，实现这些新增UI的显示和关闭的逻辑。
- * 5、解决问题的次序与分析问题相反，我们必须先设计和实现视频控制UI、"打开书"的UI。
- * 6、综上所述，在html的内容建模设计中，本版程序要增加一个 showBook元素作为UI，承载打开视频和音频这二类书的交互 。
- */
+  本版围绕五个方面问题做了开发：
+  1、进一步精简了html建模的mediaUI部件，设计仅用一套通用的UI实现音视频的控制。
+  2、程序对音视频的播放已经可以跨平台，即可以在本地桌面端播放，也可入存入Web服务器后，在真实移动端正常播放音视频；
+  3、按书的音频的JSON数据结构设计并实现了UI，用户可以在切换书后打开本书，看到弹出的章节菜单。
+  4、创作了mediaPlayer函数，让程序可以用一个通用函数实现视频和音频的控制和播放，同时在函数中实现了用一套UI控制音视频这二种媒体 。
+  5、根据新的设计，完善了代码逻辑和本软件的CSS样式外观。
+ 
+/* 重新精简设计了UI的内容，JS代码必须作相应调整
+ <div id ="mediaUI">
+   <button id="playPause">Play/Pause</button> 
+   <button id="duration">000</button>
+   <video id ="myV" ></video>
+   <ol id = "bookMenu"></ol>
+   <audio id = "myA"></audio> 
+</div>
+*/
 
 	   //打开书的后续代码，写在下面
-	   $('chapter').addEventListener("click",  function (e){
+	   $('handleBook').addEventListener("click",  function (e){
 		e.preventDefault();
 		if( !Model.bookIsOpen){
 		 setTimeout(() => {
 			$('bookFace').style.display = 'none' ;
-			$('chapter').textContent = "->关闭这本书" ;
+			$('handleBook').textContent = "->关闭这本书" ;
 		 }, 200);
 
 		let book = Model.books[Model.bookIndex] ;
 		Model.bookIsOpen = true ;
+		$('mediaUI').style.display = 'block' ;
 
 		if(book.type === 'video'){ 
           let videos = book ;
 		  let i = parseInt(videos.files.length * Math.random( )) ;
-		  UI.log($('book'),"播放NO."+(i+1)+" / "+videos.files.length+"号视频！") ;
-          
-		  $('videoUI').style.display = 'block' ;      
-		  $('myV').src = videos.URL + videos.files[i] ;
-		  $('myV').style.display = 'block' ;
-		  $('myV').addEventListener('loadedmetadata',function(){
-		    let m = Math.floor(this.duration/60) ;
-			let s = Math.ceil(this.duration - parseInt(this.duration/60)*60) ;
-			let bak = $('statusInfo').textContent ;
-			UI.log($('statusInfo'),'本视频长度为: '+ m +' 分钟 '+ s + ' 秒 ！');
-			setTimeout(() => {
-				UI.log($('statusInfo'), bak) ; 
-			}, 20000);
-           //为视频播放和暂停设置控制UI，这段代码可以在获取视频的元数据信息后生效，避免移动端发现用户没有操作而不执行视频的canplaythrough事件
-		   $('playVideo').onclick = $('playVideo').ontouchstart = function(){
-			 if(!Model.videoIsPlaying){
-			  $('myV').play() ;
-			   Model.videoIsPlaying = true;
-			   UI.log($('statusInfo'),  '视频正在播放！');
-			  }else{
-			   $('myV').pause() ;
-			   Model.videoIsPlaying = false;
-			   UI.log($('statusInfo'),  '视频已经暂停！');
-			 }
-			 $('duration').textContent = parseInt($('myV').duration) + ' s' ;
-			} ; //用户确定播放/暂停视频
-
-		  }); //获取了视频的元数据信息
-		 // 经测试，这几年的发布的移动浏览器为了节省用户流量，都不支持代码控制的play方法，必须设法把play放到用户交互事件之中
-		  $('myV').addEventListener('canplaythrough',function(){
-			UI.log($('statusInfo'), '读取视频完成，点击Play钮可播放！');
-		    this.style.width = UI.deviceWidth + 'px' ;
-			 clearInterval(Model.clock) ; //既然能播放了，则关闭后面代码（不断反馈的“耐心等待”提示）。
-		  
-			Model.clock = setInterval(() => {
-				let leftTime = parseInt($('myV').duration - $('myV').currentTime) ;
-			    UI.log($('duration'), leftTime + ' s ');
-		       }, 1000);
-		  }); //End canplaythrough
-
-		  //实际上对于低速网络环境，上面反馈需要大量的等待时间，代码此时需要给用户积极反馈
+		  UI.log($('book'),"碰巧播放NO."+(i+1)+" / "+videos.files.length+"号视频！") ;
+          mediaPlayer($('myV') , videos.URL + videos.files[i]) ;
+			  
+	  }  //视频书结束
+	
+	  if(book.type === "audio"){
+		let lessonIndex = 0 ;
+		
+        let chapters =  book.chapters[lessonIndex] ? book.chapters[lessonIndex] : [];
+		UI.log($('statusInfo'), book.name +" 的课程 ！") ;
+/* 重新精简设计了UI的内容，代码必须作相应调整
+ <div id ="mediaUI">
+   <button id="playPause">Play/Pause</button> 
+   <button id="duration">000</button>
+   <video id ="myV" ></video>
+   <ol id = "bookMenu"></ol>
+   <audio id = "myA"></audio> 
+</div>
+*/
+		
+		$('bookMenu').style.display = 'block' ;      
+		let url = book.URL + book.files[lessonIndex] ;
+		mediaPlayer($('myA') , url)
+		let dadDom = $("bookMenu") ;
+		    dadDom.textContent = "" ;
+        if( chapters.length){
+			for(let chapter of chapters){
+		 	liDom = document.createElement('li') ;
+			liDom.textContent = chapter.title ;
+			dadDom.appendChild(liDom);
+		  }
+		 }else{
+			dadDom.textContent = "遗憾，本书暂无任何教学内容 ，请自学吧 ！" ;
+		 }
+     }//音频书结束
+	 //可以播放和控制视频和音频UI的通用函数mediaPlayer，写在“进入本书”的逻辑代码块内
+ 	 function mediaPlayer(mediaDom , url){  
+		mediaDom.style.display = 'block' ;     
+		mediaDom.src = url ;
+		mediaDom.addEventListener('loadedmetadata',function(){
+		  let m = Math.floor(this.duration/60) ;
+		  let s = Math.ceil(this.duration - parseInt(this.duration/60)*60) ;
+		  let bak = $('statusInfo').textContent ;
+		  UI.log($('statusInfo'),'本教学音/视频长度为: '+ m +' 分钟 '+ s + ' 秒 ！');
+		  setTimeout(() => {
+			  UI.log($('statusInfo'), bak) ; 
+		  }, 20000);
+		 
+		 $('playPause').onclick = $('playPause').ontouchstart = function(){
+		   if(!Model.videoIsPlaying){
+			 mediaDom.play() ;
+			 Model.videoIsPlaying = true;
+			 UI.log($('statusInfo'),  '教学音/视频正在播放！');
+			}else{
+			 mediaDom.pause() ;
+			 Model.videoIsPlaying = false;
+			 UI.log($('statusInfo'),  '教学音/视频已经暂停！');
+		   }
+		   $('duration').textContent = parseInt(mediaDom.duration) + ' s' ;
+		  } ; //按移动互联网节省流量的标准，把确定播放/暂停视频的权力交给用户
+		}); //获取了视频的元数据信息
+	   
+		mediaDom.addEventListener('canplaythrough',function(){
+		  UI.log($('statusInfo'), '读取教学音/视频完成，点Play播放！');
+		  this.style.width = UI.deviceWidth + 'px' ;
+		  clearInterval(Model.clock) ;
 		  Model.clock = setInterval(() => {
-			    UI.log($('statusInfo'), parseInt(Math.random()*100) + '视频数据正在加载，请耐心等待！');
-		       }, 2000);
-		  
-	  } // 处理视频组成的书
-
+			  let leftTime = parseInt(mediaDom.duration - mediaDom.currentTime) ;
+			  UI.log($('duration'), leftTime + ' s ');
+			 }, 1000);
+		}); //End canplaythrough
+  
+		//实际上对于低速网络环境，上面反馈需要大量的等待时间，代码此时需要给用户积极反馈
+		Model.clock = setInterval(() => {
+			  UI.log($('statusInfo'), parseInt(Math.random()*100) + '教学音/视频数据正在加载，请耐心等待！');
+			 }, 2000);
+	  } //end of mediaPlayer function
+	  
 	} else//end if !Model.bookIsOpen
 	      {
 			setTimeout(() => {
 				$('bookFace').style.display = 'block' ;
-				$('chapter').textContent = "->打开这本书" ;
-				
+				$('handleBook').textContent = "->打开这本书" ;
 			 }, 200);
 			Model.bookIsOpen = false ;
 			$('myV').src = "" ;
+			$('myA').src = "" ;
 			$('myV').style.display = 'none' ;
-			$('videoUI').style.display = 'none' ;
+			$('bookMenu').textContent = '' ;
+			$('mediaUI').style.display = 'none' ;
 			clearInterval(Model.clock);
 			Model.clock = null ;
 
@@ -240,4 +278,4 @@ setTimeout(function(){
 				UI.log($('statusInfo'), " CopyRight from 李健宏 江西科技师范大学 2022--2025" );
 			},5000);
 		  } //end  if Model.bookIsOpen
-   },true); //$('chapter').addEventListener("click" 。。。 最后这个true参数很重要，让该click事件不再传递到父元素main上
+   },true); //$('handleBook').addEventListener("click" 。。。 最后这个true参数很重要，让该click事件不再传递到父元素main上

@@ -46,13 +46,13 @@ header>p#book{
   letter-spacing: 0.1em;
   text-shadow:  2px 2px black;
 }
-nav>p#chapter{
+nav>p#handleBook{
  color: white ;
  font-size: 0.9em;
  background-color: rgb(80,30,10) ;
  cursor: pointer;
 }
-nav>p#chapter:hover{
+nav>p#handleBook:hover{
   font-size: 1em;
   background-color: rgb(120,50,10) ;
   }
@@ -61,15 +61,40 @@ footer>p#statusInfo{
   font-size: 0.75em;
   text-align:center;
  }
-
-div#videoUI {
+/*
+ <div id ="mediaUI">
+   <button id="playPause">Play/Pause</button> 
+   <button id="duration">000</button>
+   <video id ="myV" ></video>
+   <ol id = "bookMenu"></ol>
+   <audio id = "myA"></audio> 
+</div>
+*/
+div#mediaUI {
   display: none ;
 }
-div#videoUI>button{
+div#mediaUI>button{
   font-size:1.0em;
   padding :0.2em 0.1em ;
+  background-color:black ;
+  color: rgb(20,195,20) ;
+ }
+ div#mediaUI>button:hover{
+    color: rgb(120,255,100) ;
  }
 video#myV{
   display: none ;
 }
-
+div#mediaUI>ol#bookMenu{
+  display: none;
+}
+ol#bookMenu>li{
+  background-color: brown;
+  color: wheat ;
+  padding: 0.2em 0.5em;
+  margin: 0.5em auto  ;
+  width: 80% ;
+}
+audio#myA{
+  display: none ;
+}

@@ -14,6 +14,10 @@ var Model = {} ;
         
         return ;
       }
+      if(Model.bookIsOpen){
+        UI.log($('book'),'本书没关闭，没法向前找另一本！') ;
+        return ;
+      }
      if(Model.bookIndex > 0){
 				Model.bookIndex -- ;
 			}else{
@@ -28,6 +32,10 @@ var Model = {} ;
         setTimeout(function(){
           UI.log($('book'),'计算思维系列课程@masterLijh') ; 
         },2000);
+        return ;
+      }
+      if(Model.bookIsOpen){
+        UI.log($('book'),'本书还没关闭，不能看下一本！') ;
         return ;
       }
 			if(Model.bookIndex < Model.books.length -1 ){
@@ -56,7 +64,7 @@ var Plan = {} ;
    document.body.style.fontSize = UI.fontBase + "px" ;
  
      $("book").style.lineHeight = UI.deviceHeight * 0.15 + 'px' ;
-     $("chapter").style.lineHeight = UI.deviceHeight * 0.1 + 'px' ;
+     $("handleBook").style.lineHeight = UI.deviceHeight * 0.1 + 'px' ;
      $("statusInfo").style.lineHeight = UI.deviceHeight * 0.1 + 'px' ;
    //为将书封面的完美按比例设置在客户设备的main区域，需要计算图片的纵横比
     
