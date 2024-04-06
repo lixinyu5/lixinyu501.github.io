@@ -147,6 +147,19 @@ setTimeout(function(){
 
 	
 	
+/****
+ * 上一版本版程序发现有2个问题亟待解决：
+ * 1、尽管运行在桌面端模拟移动设备时，视频打开完全没有问题，但传入服务器后，在真实移动端测试视频可以获取元数据信息，但不可打开，无法播放；
+ * 2、代表书的音频，其数据结构已经通过了语法分析，但在“打开书”后没有任何UI出现，会对用户理解"打开书"的概念造成困扰；
+ * 本版试图解决上面二个问题：
+ * 1、针对第1点问题，分析其原因为：可能移动端阻止了视频数据，导致视频对象myV无法具备外形，造成点击打开的代码逻辑无效；
+ * 2、针对上述第1点分析，本版将尝试引入一个播放工具栏，让播放/暂停的控制直接交给用户，这样或许可以化解移动端的保护流量策略造成的问题，同时视频的时间信息都显示在上面；
+ * 3、针对第2点问题，增加UI.showMenu方法，为用户的“打开书”的操作，提供当前音频的内容及时反馈。
+ * 4、最后，本版代码还要部署新增工具栏和菜单的UI部件，实现这些新增UI的显示和关闭的逻辑。
+ * 5、解决问题的次序与分析问题相反，我们必须先设计和实现视频控制UI、"打开书"的UI。
+ * 6、综上所述，在html的内容建模设计中，本版程序要增加一个 showBook元素作为UI，承载打开视频和音频这二类书的交互 。
+ */
+
 	   //打开书的后续代码，写在下面
 	   $('chapter').addEventListener("click",  function (e){
 		e.preventDefault();
@@ -159,13 +172,12 @@ setTimeout(function(){
 		let book = Model.books[Model.bookIndex] ;
 		Model.bookIsOpen = true ;
 
-		if(book.type === 'video'){ //此处原来的重要bug，=== 误写为 = ，由于语法没有错，但逻辑巨大的问题，导致程序响应book类型不是视频的所有交互。
+		if(book.type === 'video'){ 
           let videos = book ;
 		  let i = parseInt(videos.files.length * Math.random( )) ;
 		  UI.log($('book'),"播放NO."+(i+1)+" / "+videos.files.length+"号视频！") ;
           
-		  //console.log(videos) ;
-	      
+		  $('videoUI').style.display = 'block' ;      
 		  $('myV').src = videos.URL + videos.files[i] ;
 		  $('myV').style.display = 'block' ;
 		  $('myV').addEventListener('loadedmetadata',function(){
@@ -176,33 +188,35 @@ setTimeout(function(){
 			setTimeout(() => {
 				UI.log($('statusInfo'), bak) ; 
 			}, 20000);
+           //为视频播放和暂停设置控制UI，这段代码可以在获取视频的元数据信息后生效，避免移动端发现用户没有操作而不执行视频的canplaythrough事件
+		   $('playVideo').onclick = $('playVideo').ontouchstart = function(){
+			 if(!Model.videoIsPlaying){
+			  $('myV').play() ;
+			   Model.videoIsPlaying = true;
+			   UI.log($('statusInfo'),  '视频正在播放！');
+			  }else{
+			   $('myV').pause() ;
+			   Model.videoIsPlaying = false;
+			   UI.log($('statusInfo'),  '视频已经暂停！');
+			 }
+			 $('duration').textContent = parseInt($('myV').duration) + ' s' ;
+			} ; //用户确定播放/暂停视频
 
-		  });
+		  }); //获取了视频的元数据信息
 		 // 经测试，这几年的发布的移动浏览器为了节省用户流量，都不支持代码控制的play方法，必须设法把play放到用户交互事件之中
 		  $('myV').addEventListener('canplaythrough',function(){
-			UI.log($('statusInfo'), '读取视频完成，点击主区域播放！');
-		    $('myV').onclick = $('myV').ontouchstart = function(){
-			 if(book.type === 'video'){
-			  if(!Model.videoIsPlaying){
-			   $('myV').play() ;
-				Model.videoIsPlaying = true;
-				UI.log($('statusInfo'),  '视频正在播放，可点击它可以暂停！');
-         	  }else{
-				$('myV').pause() ;
-				Model.videoIsPlaying = false;
-				UI.log($('statusInfo'),  '视频已经暂停，可点击它可继续播放！');
-			  }
-			 }
-	       } ; //用户确定播放/暂停视频
+			UI.log($('statusInfo'), '读取视频完成，点击Play钮可播放！');
 		    this.style.width = UI.deviceWidth + 'px' ;
-			if( Model.clock){
-			 clearInterval(Model.clock) ; //既然能播放了，则清楚下面不断反馈的“耐心等待”
-			 Model.clock = null ;
-			}
-		  });
+			 clearInterval(Model.clock) ; //既然能播放了，则关闭后面代码（不断反馈的“耐心等待”提示）。
+		  
+			Model.clock = setInterval(() => {
+				let leftTime = parseInt($('myV').duration - $('myV').currentTime) ;
+			    UI.log($('duration'), leftTime + ' s ');
+		       }, 1000);
+		  }); //End canplaythrough
 
 		  //实际上对于低速网络环境，上面反馈需要大量的等待时间，代码此时需要给用户积极反馈
-		   Model.clock = setInterval(() => {
+		  Model.clock = setInterval(() => {
 			    UI.log($('statusInfo'), parseInt(Math.random()*100) + '视频数据正在加载，请耐心等待！');
 		       }, 2000);
 		  
@@ -213,11 +227,15 @@ setTimeout(function(){
 			setTimeout(() => {
 				$('bookFace').style.display = 'block' ;
 				$('chapter').textContent = "->打开这本书" ;
+				
 			 }, 200);
 			Model.bookIsOpen = false ;
 			$('myV').src = "" ;
 			$('myV').style.display = 'none' ;
-			
+			$('videoUI').style.display = 'none' ;
+			clearInterval(Model.clock);
+			Model.clock = null ;
+
 			setTimeout(function(){
 				UI.log($('statusInfo'), " CopyRight from 李健宏 江西科技师范大学 2022--2025" );
 			},5000);

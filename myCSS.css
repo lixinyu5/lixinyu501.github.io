@@ -62,7 +62,14 @@ footer>p#statusInfo{
   text-align:center;
  }
 
+div#videoUI {
+  display: none ;
+}
+div#videoUI>button{
+  font-size:1.0em;
+  padding :0.2em 0.1em ;
+ }
 video#myV{
   display: none ;
-  position: absolute ;
 }
+
