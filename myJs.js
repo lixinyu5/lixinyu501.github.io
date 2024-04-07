@@ -16,6 +16,7 @@ setTimeout(function(){
 	   }
 	  //console.log(imgArr);
 	  Plan.loadImgOneByOne(imgArr) ;
+	  Plan.addBookButtons() ;
    }
  },3000) ; //发出request("myData.json") 后，3s后第一次处理调入的数据
 
@@ -33,7 +34,10 @@ setTimeout(function(){
 	
 	Model.bookIndex = 0 ; //设置当前书的指针
 	document.body.onclick = document.body.ontouchstart = null ; 
-  };
+    Plan.createMyUI() ;
+  }; //第一次点击软件，进入选择书本
+
+Plan.createMyUI = function(){
 
   Model.mouse = {
 	isDown: false ,
@@ -73,8 +77,12 @@ setTimeout(function(){
 			}
 		}
         mouse.x = 0 ;
-		this.removeChild($('bookFace')) ;
-		this.appendChild(UI.bookFace[Model.bookIndex]) ;
+      //下面的if逻辑，保障了在13张书页图全部加载完成前，不作书的切换。代码在慢速网络环境下，若遇到用户的快速滑动，就不会出现书的逻辑和封面的匹配问题！
+		if(Model.books.length >1 && UI.bookFace.length == Model.books.length){ 
+		 this.removeChild($('bookFace')) ;
+		 this.appendChild(UI.bookFace[Model.bookIndex]) ;
+		}
+
 		bookFace.style.opacity =  '0.1' ;
       setTimeout(function(){ 
 		$('bookFace').style.left =  '0px' ;
@@ -86,7 +94,6 @@ setTimeout(function(){
 	    },200); 
 	 }
    }) ;       //'main'.addEventListener("mouseup")
-
 
 
 //------触屏模型定义和处理函数---------
@@ -124,9 +131,13 @@ setTimeout(function(){
           if (touch.deltaX < -mini ){
 			  Model.prevBook() ;
           }
-		this.removeChild($('bookFace')) ;
-		this.appendChild(UI.bookFace[Model.bookIndex]) ;
-		$('bookFace').style.opacity =  '0.1' ;
+		 //下面的if逻辑，保障了在13张书页图全部加载完成前，不作书的切换。代码在慢速网络环境下，若遇到用户的快速滑动，就不会出现书的逻辑和封面的匹配问题！
+         if(Model.books.length >1 && UI.bookFace.length == Model.books.length){
+		  this.removeChild($('bookFace')) ;
+		  this.appendChild(UI.bookFace[Model.bookIndex]) ;
+		 }
+		
+		 $('bookFace').style.opacity =  '0.1' ;
         setTimeout(function(){ 
 		  $('bookFace').style.left =  '0px' ;
 		  $('bookFace').style.opacity =  '0.9' ;
@@ -147,31 +158,34 @@ setTimeout(function(){
 
 	
 	
-/****
-  本版围绕五个方面问题做了开发：
-  1、进一步精简了html建模的mediaUI部件，设计仅用一套通用的UI实现音视频的控制。
-  2、程序对音视频的播放已经可以跨平台，即可以在本地桌面端播放，也可入存入Web服务器后，在真实移动端正常播放音视频；
-  3、按书的音频的JSON数据结构设计并实现了UI，用户可以在切换书后打开本书，看到弹出的章节菜单。
-  4、创作了mediaPlayer函数，让程序可以用一个通用函数实现视频和音频的控制和播放，同时在函数中实现了用一套UI控制音视频这二种媒体 。
-  5、根据新的设计，完善了代码逻辑和本软件的CSS样式外观。
+
  
-/* 重新精简设计了UI的内容，JS代码必须作相应调整
- <div id ="mediaUI">
-   <button id="playPause">Play/Pause</button> 
-   <button id="duration">000</button>
-   <video id ="myV" ></video>
-   <ol id = "bookMenu"></ol>
-   <audio id = "myA"></audio> 
-</div>
+/* 对UI设计内容再次迭代，JS代码作出相应调整
+
+  <main id = 'main'>
+    <img  id = "bookFace">
+    <div id ="showBook">
+      
+      <div id = "mediaUI">
+       <button id="prevMedia">Prev</button> 
+       <button id="playPause">Play | Pause</button> 
+       <button id="duration">000</button>
+       <button id="nextMedia">Next</button> 
+      </div>
+      <video id ="myV" ></video>
+      <ol id = "bookMenu"></ol>
+      <audio id = "myA"></audio> 
+    </div>
+  </main> 
 */
 
-	   //打开书的后续代码，写在下面
+	   //打开本书的后续代码，写在下面
 	   $('handleBook').addEventListener("click",  function (e){
 		e.preventDefault();
 		if( !Model.bookIsOpen){
 		 setTimeout(() => {
 			$('bookFace').style.display = 'none' ;
-			$('handleBook').textContent = "->关闭这本书" ;
+			$('handleBook').textContent = "关闭本书" ;
 		 }, 200);
 
 		let book = Model.books[Model.bookIndex] ;
@@ -216,7 +230,7 @@ setTimeout(function(){
 			dadDom.textContent = "遗憾，本书暂无任何教学内容 ，请自学吧 ！" ;
 		 }
      }//音频书结束
-	 //可以播放和控制视频和音频UI的通用函数mediaPlayer，写在“进入本书”的逻辑代码块内
+	 //可以播放和控制视频和音频UI的通用函数mediaPlayer，写在“打开本书”的逻辑代码块内
  	 function mediaPlayer(mediaDom , url){  
 		mediaDom.style.display = 'block' ;     
 		mediaDom.src = url ;
@@ -263,7 +277,7 @@ setTimeout(function(){
 	      {
 			setTimeout(() => {
 				$('bookFace').style.display = 'block' ;
-				$('handleBook').textContent = "->打开这本书" ;
+				$('handleBook').textContent = "打开本书" ;
 			 }, 200);
 			Model.bookIsOpen = false ;
 			$('myV').src = "" ;
@@ -279,3 +293,19 @@ setTimeout(function(){
 			},5000);
 		  } //end  if Model.bookIsOpen
    },true); //$('handleBook').addEventListener("click" 。。。 最后这个true参数很重要，让该click事件不再传递到父元素main上
+   
+   $('downloadBook').addEventListener("click",function(){
+  	  let book = Model.books[Model.bookIndex] ;
+	if(book.type=="audio" ){
+	 let url = book.URL + book.pdf ;
+	 window.open(url,target="_BLANK") ;
+	 UI.log($('statusInfo'),"系统在另一个窗口打开了本书PDF版！");
+	}else{
+	  UI.log($('statusInfo'),"抱歉，系统无法提供本书的PDF文件！");
+	}
+   });
+    $('aboutBook').addEventListener("click",function(){
+		console.log("介绍本书内容！");
+		UI.log($('statusInfo'),"请打开本书，听听第一段音频即可！");
+   });   
+}//最大的函数createMyUI结束，该函数把所有增加用户交互功能的代码打包

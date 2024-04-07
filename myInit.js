@@ -64,30 +64,56 @@ var Plan = {} ;
    document.body.style.fontSize = UI.fontBase + "px" ;
  
      $("book").style.lineHeight = UI.deviceHeight * 0.15 + 'px' ;
-     $("handleBook").style.lineHeight = UI.deviceHeight * 0.1 + 'px' ;
+     $("nav").style.lineHeight = UI.deviceHeight * 0.05 + 'px' ;
      $("statusInfo").style.lineHeight = UI.deviceHeight * 0.1 + 'px' ;
    //为将书封面的完美按比例设置在客户设备的main区域，需要计算图片的纵横比
     
   } //Plan.responsiveUI
 
- //imgArr为图片路径构成的数组
+
+  
+ //imgArr为图片路径构成的数组，而所有书的封面图片的地址，源于json文本数据文件
+ /*
+   Plan.loadImgOneByOne的以前版本的Bug描述：
+   当用户在系统未读完全部图片前，快速滑动进行书切换，会造成UI.bookFace重复读入的问题！
+   本版 Plan.loadImgOneByOne 函数做了重要修改，解决了用户恶意操作带来的UI.bookFace与Model.books不一致的问题！
+ */
   Plan.loadImgOneByOne = function(imgArr){
-    //------ lesson下的十几门课的封面图片的地址，源于json文本数据文件
      let img = new Image();
       img.id = 'bookFace' ;
-      img.src =  imgArr[Model.bookIndex] ;
-     
+     let index = UI.bookFace.length ;
+      img.src =  imgArr[index] ;
+      
         img.addEventListener('load', function(){ 
           UI.bookFace.push(this) ;
-         if ( Model.bookIndex < imgArr.length - 1 ){  //此处修改了以前逻辑的bug
-           Model.bookIndex ++ ;
-           Plan.loadImgOneByOne(imgArr);
+         if ( UI.bookFace.length < imgArr.length  ){  
+             Plan.loadImgOneByOne(imgArr);
           }
-          let s = imgArr[Model.bookIndex].slice(0,imgArr[Model.bookIndex].length - 4) ;
+          let s = imgArr[index].slice(0,imgArr[index].length - 4) ;
           UI.log($('statusInfo'), '《 '+ s + ' 》'+ ' has been loaded !')
           } );  //img.addEventListener('load'。。。
        }//Plan.loadImgOneByOne
-
+ //本版新增功能，为nav栏设置三个读书功能按钮
+ /*
+   <nav>
+    <button id ="handleBook"> 打开本书 </button>
+    <button id ="downloadBook"> 下载本书 </button>
+    <button id ="aboutBook"> 关于本书 </button>
+   </nav>
+ */
+  Plan.addBookButtons = function(){
+   let dadDom =  $('nav') ;
+       dadDom.textContent = '' ;
+   let ids = ["handleBook","downloadBook","aboutBook"] ;
+   let contents = ["打开本书","下载本书","关于本书"] ;
+       for(let i=0 ;i < ids.length ; i++){
+         let button = document.createElement('button');
+         button.id = ids[i] ;
+         button.textContent = contents[i];
+         dadDom.appendChild(button);
+       }
+  };
+         
 //httpLoader模型读入文本文件后，把文本处理为数组。
 var httpLoader = { 
        textContent: [] , 
