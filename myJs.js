@@ -159,81 +159,88 @@ Plan.createMyUI = function(){
 	
 	
 
- 
-/* 对UI设计内容再次迭代，JS代码作出相应调整
 
-  <main id = 'main'>
-    <img  id = "bookFace">
-    <div id ="showBook">
-      
+
+//“打开本书”按钮发生的事件，编写代码如下：
+ $('handleBook').addEventListener("click",  function (e){
+	e.preventDefault();
+	if( !Model.bookIsOpen){
+		 setTimeout(() => {
+			$('bookFace').style.display = 'none' ;
+			$('handleBook').textContent = "关闭本书" ;
+		 }, 200);
+
+	let book = Model.books[Model.bookIndex] ;
+		Model.bookIsOpen = true ;
+		$('mediaUI').style.display = 'block' ;
+     
+/* 对UI设计更改如下，JS代码作出相应调整和优化
       <div id = "mediaUI">
        <button id="prevMedia">Prev</button> 
        <button id="playPause">Play | Pause</button> 
        <button id="duration">000</button>
        <button id="nextMedia">Next</button> 
       </div>
-      <video id ="myV" ></video>
-      <ol id = "bookMenu"></ol>
-      <audio id = "myA"></audio> 
-    </div>
-  </main> 
+** 按HTML对UI的设计，已经在Model中为本书设定一个fileIndex属性，
+**用来记录当前打开的音视频编号，该代码已经在myInit中添加
+**首次打开书，默认打开第一个媒体文件，即Model.fileIndex 为 0
 */
+/**
+ * 本版程序整理了“打开本书”按钮的逻辑，再次组织内部了代码：
+ * 1、在 !Model.bookIsOpen（“打开本书”） 逻辑模块中，增加了playVideoBook()、playAudioBook() 函数
+ *    ，并在这二个函数中处理UI的反馈。
+ * 2、PlayVideoBook()和playAudioBook() 函数，调用mediaPlayer(mediaDom , url) 播放音视频文件，
+ *    mediaPlayer内部实现对音视频的的具体异步控制和UI反馈。
+ * 3、在这个逻辑模块中，还组织了playPause的点击事件代码，用于播放或暂停媒体。
+ * 4、仍然在在这个逻辑模块中，增加了用于本书内容导航二个按钮的事件代码，即：prevMedia和nextMedia。
+ * 5、prevMedia和nextMedia内，管理了Model.fileIndex的定位，调用了playVideoBook()、playAudioBook()来播放媒体。
+ * 6、本版实现的playAudioBook() 函数，完成了弹出列表式菜单的设计部署，并更改了相应的CSS代码，实现了对教学音频较好的视觉反馈和定位互动效果。
+ * 7、本项目的myData.json数据中，对audio类书的chapters数据，仅输入了模拟了CS这一本书，其他数据还有待输入。
+ */
+  if(book.type === 'video'){ 
+	playVideoBook() ;
+  }  //视频书结束
 
-	   //打开本书的后续代码，写在下面
-	   $('handleBook').addEventListener("click",  function (e){
-		e.preventDefault();
-		if( !Model.bookIsOpen){
-		 setTimeout(() => {
-			$('bookFace').style.display = 'none' ;
-			$('handleBook').textContent = "关闭本书" ;
-		 }, 200);
+  if(book.type === "audio"){
+	playAudioBook() ;
+  }//音频书结束
 
-		let book = Model.books[Model.bookIndex] ;
-		Model.bookIsOpen = true ;
-		$('mediaUI').style.display = 'block' ;
+function playVideoBook(){
+	let videos = book ;
+	let i = Model.fileIndex ;
+	UI.log($('book'),"播放NO."+(i+1)+" / "+videos.files.length+"号视频！") ;
+	mediaPlayer($('myV') , videos.URL + videos.files[i]) ;
+  } //end of function playVideo()
+function playAudioBook(){
+	let i = Model.fileIndex ;
+	let chapters =  book.chapters[i] ? book.chapters[i] : [];
+	 $('bookMenu').style.display = 'block' ;  
+    let url = book.URL + book.files[i] ;
+	 mediaPlayer($('myA') , url) ;
+	// UI.log($('statusInfo'), book.name +" 的课程 ！") ;
+	let dadDom = $("bookMenu") ;
+		dadDom.textContent = "" ;
+	if( chapters.length){
+		for(let chapter of chapters){
+		 liDom = document.createElement('li') ;
+		 let duration = chapter.end - chapter.begin ;
+		 liDom.textContent = chapter.title + ' 【'+duration+'秒】';
+         liDom.onclick = liDom.ontouchstart = function(){
+			console.log('click '+chapter.title + '!');
+			$('myA').currentTime = chapter.begin ;
+			this.className = "choice" ;
+		 };
+		 dadDom.appendChild(liDom);
+	  }
+	 }else{
+		dadDom.textContent = "遗憾，本书暂无教学音频 ！" ;
+	 }
+  }//end of function playAudio()
 
-		if(book.type === 'video'){ 
-          let videos = book ;
-		  let i = parseInt(videos.files.length * Math.random( )) ;
-		  UI.log($('book'),"碰巧播放NO."+(i+1)+" / "+videos.files.length+"号视频！") ;
-          mediaPlayer($('myV') , videos.URL + videos.files[i]) ;
-			  
-	  }  //视频书结束
-	
-	  if(book.type === "audio"){
-		let lessonIndex = 0 ;
-		
-        let chapters =  book.chapters[lessonIndex] ? book.chapters[lessonIndex] : [];
-		UI.log($('statusInfo'), book.name +" 的课程 ！") ;
-/* 重新精简设计了UI的内容，代码必须作相应调整
- <div id ="mediaUI">
-   <button id="playPause">Play/Pause</button> 
-   <button id="duration">000</button>
-   <video id ="myV" ></video>
-   <ol id = "bookMenu"></ol>
-   <audio id = "myA"></audio> 
-</div>
-*/
-		
-		$('bookMenu').style.display = 'block' ;      
-		let url = book.URL + book.files[lessonIndex] ;
-		mediaPlayer($('myA') , url)
-		let dadDom = $("bookMenu") ;
-		    dadDom.textContent = "" ;
-        if( chapters.length){
-			for(let chapter of chapters){
-		 	liDom = document.createElement('li') ;
-			liDom.textContent = chapter.title ;
-			dadDom.appendChild(liDom);
-		  }
-		 }else{
-			dadDom.textContent = "遗憾，本书暂无任何教学内容 ，请自学吧 ！" ;
-		 }
-     }//音频书结束
-	 //可以播放和控制视频和音频UI的通用函数mediaPlayer，写在“打开本书”的逻辑代码块内
- 	 function mediaPlayer(mediaDom , url){  
+  function mediaPlayer(mediaDom , url){  
 		mediaDom.style.display = 'block' ;     
-		mediaDom.src = url ;
+		mediaDom.src = url ; //这条语句将开启音视频漫长的加载过程
+	
 		mediaDom.addEventListener('loadedmetadata',function(){
 		  let m = Math.floor(this.duration/60) ;
 		  let s = Math.ceil(this.duration - parseInt(this.duration/60)*60) ;
@@ -242,39 +249,78 @@ Plan.createMyUI = function(){
 		  setTimeout(() => {
 			  UI.log($('statusInfo'), bak) ; 
 		  }, 20000);
-		 
-		 $('playPause').onclick = $('playPause').ontouchstart = function(){
-		   if(!Model.videoIsPlaying){
-			 mediaDom.play() ;
-			 Model.videoIsPlaying = true;
-			 UI.log($('statusInfo'),  '教学音/视频正在播放！');
-			}else{
-			 mediaDom.pause() ;
-			 Model.videoIsPlaying = false;
-			 UI.log($('statusInfo'),  '教学音/视频已经暂停！');
-		   }
-		   $('duration').textContent = parseInt(mediaDom.duration) + ' s' ;
-		  } ; //按移动互联网节省流量的标准，把确定播放/暂停视频的权力交给用户
+	
 		}); //获取了视频的元数据信息
 	   
 		mediaDom.addEventListener('canplaythrough',function(){
 		  UI.log($('statusInfo'), '读取教学音/视频完成，点Play播放！');
 		  this.style.width = UI.deviceWidth + 'px' ;
-		  clearInterval(Model.clock) ;
+		 
 		  Model.clock = setInterval(() => {
 			  let leftTime = parseInt(mediaDom.duration - mediaDom.currentTime) ;
 			  UI.log($('duration'), leftTime + ' s ');
 			 }, 1000);
 		}); //End canplaythrough
-  
-		//实际上对于低速网络环境，上面反馈需要大量的等待时间，代码此时需要给用户积极反馈
-		Model.clock = setInterval(() => {
-			  UI.log($('statusInfo'), parseInt(Math.random()*100) + '教学音/视频数据正在加载，请耐心等待！');
-			 }, 2000);
-	  } //end of mediaPlayer function
-	  
+  	  } //end of mediaPlayer function
+	
+	$('playPause').onclick = $('playPause').ontouchstart = function(){
+		let mediaDom = null ;
+		if(book.type === "video"){
+			mediaDom = $("myV") ;
+		}
+		if(book.type === "audio"){
+			mediaDom = $("myA") ;
+		}
+		if(!Model.videoIsPlaying){
+		 	  mediaDom.play() ;
+			  this.textContent = "暂 停" ;
+			  Model.videoIsPlaying = true;
+			  UI.log($('statusInfo'),  '教学音/视频正在播放！');
+			 }else{
+			  mediaDom.pause() ;
+			  this.textContent = "播 放" ;
+			  Model.videoIsPlaying = false;
+			  UI.log($('statusInfo'),  '教学音/视频已经暂停！');
+			}
+		 $('duration').textContent = parseInt(mediaDom.duration) + ' s' ;
+		} ; //按移动互联网节省流量的标准，把确定播放/暂停视频的权力交给用户
+
+     $("prevMedia").onclick = $("prevMedia").ontouchstart = function(){
+       //上一级的变量book已经存放了当前的书对象
+	   let files = book.files ;
+	    if(Model.fileIndex > 0 ){
+			Model.fileIndex -- ;
+		  }else{
+			  Model.fileIndex = files.length - 1 ;
+		  }
+		 console.log("Prev Media Button clicked!") ;
+		 if(book.type =="video"){
+			playVideoBook();
+		 }
+		 if(book.type == "audio"){
+			playAudioBook();
+		 }
+		 $('playPause').textContent = "播 放" ; 
+	 };
+	 $("nextMedia").onclick = $("nextMedia").ontouchstart = function(){
+		console.log("Next  Media Button clicked!") ;
+		let files = book.files ;
+		   if(Model.fileIndex < files.length -1){
+              Model.fileIndex ++ ;
+			}else{
+				Model.fileIndex = 0 ;
+			}
+		  if(book.type =="video"){
+				playVideoBook();
+			 }
+		  if(book.type == "audio"){
+				playAudioBook();
+			 }
+		  $('playPause').textContent = "播 放" ;
+	 };
+
 	} else//end if !Model.bookIsOpen
-	      {
+	      { //下面的代码模块处理关闭本书的逻辑
 			setTimeout(() => {
 				$('bookFace').style.display = 'block' ;
 				$('handleBook').textContent = "打开本书" ;
@@ -282,9 +328,12 @@ Plan.createMyUI = function(){
 			Model.bookIsOpen = false ;
 			$('myV').src = "" ;
 			$('myA').src = "" ;
+			Model.fileIndex = 0 ;
+			$('playPause').textContent = "Play | Pause" ;
 			$('myV').style.display = 'none' ;
 			$('bookMenu').textContent = '' ;
 			$('mediaUI').style.display = 'none' ;
+			//离开本书，关闭显示 duration的动态显示
 			clearInterval(Model.clock);
 			Model.clock = null ;
 
@@ -304,7 +353,7 @@ Plan.createMyUI = function(){
 	  UI.log($('statusInfo'),"抱歉，系统无法提供本书的PDF文件！");
 	}
    });
-    $('aboutBook').addEventListener("click",function(){
+   $('aboutBook').addEventListener("click",function(){
 		console.log("介绍本书内容！");
 		UI.log($('statusInfo'),"请打开本书，听听第一段音频即可！");
    });   

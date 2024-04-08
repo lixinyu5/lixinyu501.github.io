@@ -4,6 +4,7 @@ body{
       background-color: rgb(0,0,0) ;
       text-align: center ;
       /* max-width: 800px; */
+     
 	     }
 
 main>img#bookFace{
@@ -58,15 +59,7 @@ footer>p#statusInfo{
   font-size: 0.75em;
   text-align:center;
  }
-/*
- <div id ="mediaUI">
-   <button id="playPause">Play/Pause</button> 
-   <button id="duration">000</button>
-   <video id ="myV" ></video>
-   <ol id = "bookMenu"></ol>
-   <audio id = "myA"></audio> 
-</div>
-*/
+
 div#mediaUI {
   display: none ;
 }
@@ -80,19 +73,34 @@ button{
  button:hover{
     color: rgb(120,255,100) ;
  }
+ /*仅用下面一条CSS代码，利用层叠性，就可以让nav内的三个按钮与播放媒体的按钮有所区别*/
+nav button{
+  font-size: 1.1em;
+  color:aquamarine;
+  letter-spacing: 0.2em;
+}
 video#myV{
   display: none ;
 }
 div#mediaUI>ol#bookMenu{
   display: none;
+  overflow: scroll;
 }
 ol#bookMenu>li{
   background-color: brown;
   color: wheat ;
-  padding: 0.2em 0.5em;
+  padding: 0.4em 0.5em;
   margin: 0.5em auto  ;
-  width: 80% ;
+  width: 90% ;
+  cursor: pointer;
+}
+ol#bookMenu>li.choice{
+  background-color: rgb(0,50,120);
+  width: 96% ;
 }
 audio#myA{
   display: none ;
+}
+main{
+ overflow: scroll;
 }

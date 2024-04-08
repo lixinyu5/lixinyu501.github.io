@@ -3,6 +3,7 @@ var Model = {} ;
     Model.clock = null ;
 	Model.books = [] ;
   Model.bookIndex = 0 ;
+  Model.fileIndex = 0 ;
   Model.bookIsOpen = false ;
   Model.videoIsPlaying = false ;
 	Model.prevBook = function(){
