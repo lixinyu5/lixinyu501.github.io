@@ -28,10 +28,13 @@
 2.2 毕设的技术路线规划
  所谓技术路线特指从事理工科的人们为实现复杂的工程而制定的计划或规划，技术二字强调的是专业性，一般用本专业或行业的术语表达，而路线二字则强调逻辑性，一般表达了事物的因果关系或层次关系，我们常用技术路线来证明工程项目或研究的可行性。
 2.2.1 抬头看路，大方向的选择
+原文：[4] p11
+COMPUTER SCIENCE AS A DISCIPLINE 
+With the invention of computers, a new discipline has evolved: computer science. Like any other discipline, computer science has now divided into several areas. We can divide these areas into two broad categories: systems areas and applications areas. Systems areas cover those areas that directly related to the creation of hardware and software, such as computer architecture, computer networking, security issues, operating systems, algorithms, programming  languages, and software engineering. Applications areas cover those that are related to the use of computers, such as databases and artificial intelligence. 
 计算机科学与技术研究的内容非常丰富，可以说是一个大学科，包含许多专业，我从本科的课程体系总结。以我有限的时间和能力，如果没有做好具体技术路线选择，就可能会在自己不懂或不感兴趣的浩瀚技术海洋中被逐渐消磨学习热情，事倍功半。方向的选择就如人生选择那样重要。我大致把CS专业的方向大致分了三种：一是研究计算机硬件体系的架构，这种方向底层接近微电子数字电路和芯片研究，本科阶段还可以从嵌入式软件硬件开发角度学习，这对学习资源的要求较高，我虽有兴趣，但无此特长和条件。二是研究系统软件的体系和架构和管理，这种方向需要深入操作系统的体系架构和网络，我对此也很有兴趣，但或许由于社会需求对此并不太大，所以在这个方向，我仅作必要的学习和理解。三则是我选择的研究应用软件的开发方向，这不仅是因为国家和社会方方面面的对此类各层次的人才的需求非常大，也是因为我理解自己本人作为一般的本科生，水平和经验有限，更喜欢研究具体的问题，也更愿意从发现问题、分析问题再到解决问题，这个相对直观的思维来学习和实践。
 不管是哪个方向，写文档还是要从发现问题，到分析问题再到解决问题这个思路来写，在实践中却不能盲从这个思路，本专业的学生应该把大部分时间和精力落实到学习和应用技术上来，确切的说需要整合多项技术和技能，基于自己的代码能力来寻找问题进而分析和分解解题。对普通学生而言，由于抽象能力和逻辑能力还刚刚建立不久，切记不能随心所欲理想地去追踪社会热点问题，也不能分析问题时脱离自己的技术能力。主要是学会立足自己当下的能力，做好规划，选择自己可以做好的项目，在实践中不断提升能力，同时在实践中应用好本方向的核心课程一些基础理论和方法，总结出来的论文才会有一定的深度。
 2.2.2 Web应用开发的技术路线
-我选择了应用软件开发的方向，但其内涵还是非常丰富也是非常庞杂的，就比如说用于写代码的高级计算机语言，常见的就不下十几种，而且几乎每种都是博大精深且独具自己特色的，他们在各个领域都有一席之地，有的专攻Android手机平台、有的专门支持苹果的IOS平台、还有的仅仅适用于window桌面系统，当然还有一些科研院所大型机构在使用UNIX/Linux平台。通用的计算机系统的操作系统如此复杂，加上现代计算机的外观又如此多样化（比如我们现在的移动端设备），我们提出的第一个问题就是：软件能否做到跨硬件跨平台？我们都承认人的时间是最珍贵的，开发者能否写一套代码，就可以直接在所有的硬件和操作系统上运行？当然不是我第一个提出这个问题的，改变互联网世界的Web标准，一直在致力于实现这个伟大而光荣的理想。Web之父（Tim）在发明Web的基本技术架构以后，成立了W3C组织，[2]该组织在2010年后推出的HTML5国际标准，结合欧洲ECMA组织维护的ECMAScript国际标准，几乎完美实现了全球开发者这个理想，这也是我所谓的Web应用开发的技术路线。
+我虽然选择了应用软件开发的方向，但这个方向的内涵还是非常丰富，也是非常庞杂的，比如说用于写代码的现代高级计算机语言，常见的就不下十几种，而且每种都是博大精深独具自己特色的，他们在擅长领域都有一席之地，有的专攻Android手机平台、有的专门支持苹果的IOS平台、还有的仅仅适用于window桌面系统，当然还有用于一些大型机构使用UNIX/Linux平台的软件开发。现代计算机的种类多样，现代移动端设备的多样化，运行的操作系统也是同样是如此复杂，因此我们提出的第一个问题就是：软件无论是开发还是运行能否做到跨硬件跨系统 ？下面简称跨平台 ，人人都承认人的时间是最珍贵的，也就说：开发者能否写一套通用的代码，就可以直接在所有的硬件和操作系统上运行？就像圣经故事里的巴别塔，代码就是计算机世界里的语言通用的语言。当然肯定不是我第一个提出这个问题的，这个理想其实就是是改变互联网世界的Web标准，Web之父（Tim）在发明Web的基本技术架构以后，成立了W3C组织，[2]该组织在2010年后推出的HTML5国际标准，结合欧洲ECMA组织维护的ECMAScript国际标准，几乎完美缔造了全球开发者实现开发平台统一的理想，直到今天，这帮科学家与Web行业也还一直在致力于完善这个伟大而光荣的理想。学习Web标准和Web技术，学习编写Web程序和应用有关工具，最终架构一套高质量代码的跨平台运行的应用，这就是我所谓的Web应用开发的技术路线。
 2.2.2 支撑技术路线的内功
 有了标准，效果却因人而不同，开发者的内功还是体现在高质量的代码能力上，我简单地可以理解践行这条技术路线，其实就是打造修炼我的高质量代码能力之路，分三个层次：
 一是对计算机硬件和操作系统的理解和运用能力，我们写的代码本质上都会是运行在操作系统之上，而操作系统又直接对接硬件，在不影响开发效率前提下，让自己的代码架构在偏底层，则会更好地锻炼我们的对系统的掌控能力，提升应用软件的性能，减小消耗，也越可能使自己的代码为他人所用。Web应用（Web Application）由于基于HTML5国际标准，自2009年谷歌开源其V8引擎以来，现代现代浏览器纷纷学习演化，具有跨平台特性和极高性能，已经广泛地存在于移动互联网时代的各类设备之中，从Web应用的开发者角度看，现代操作系统其实就是操作系统的延申，我们也见证了这十几年Web为应用软件插上了腾飞的翅膀。
@@ -67,18 +70,33 @@
 未完待续
 3.1.4 利用Github建立自己的http服务器
 未完待续
-3.2 Web前端的运行环境
+3.2 Web客户端程序的运行环境
 未完待续
 3.2.1 现代浏览器是理想的跨平台的代码运行环境
-未完待续
+原文：[7] p5
+ According to http://gs.statcounter.com, the most popular browsers for computers are Google Chrome, Microsoft’s browsers (Microsoft Edge and Internet Explorer), and Mozilla2 Firefox, with Google Chrome at #1. Other browsers are Safari (for Mac devices), Opera, and Android’s default browser. Safari and Android are particularly popular with mobile devices.
+
+
 3.2.2 现代桌面浏览器的Console工具
 未完待续
 3.2.3 DOM模型和Web Application前端渲染（CSS，JS）机制
-未完待续
+原文：[7] p322
+The Document Object Model, which is normally referred to as the DOM, models all of the parts of a web page document as nodes in a node tree. A node tree is similar to a directory tree, except instead of showing directories that include other directories (and files), it shows web page elements that include other elements (and text and attributes). Each node represents either (1) an element, (2) a text item that appears between an element’s start and end tags, or (3) an attribute within one of the elements.
+With objects that are built into the DOM, like the document object , you don’t have to create the objects yourself. Behind the scenes, when you load a web page, the JavaScript engine creates an object for every element on the web page (as well as for every attribute within the elements and for every text item between the element tags).
+原文：[7] p74
+The W3C’s philosophy in terms of how HTML and CSS should fit together is (1) use HTML elements to specify a web page’s content, and (2) use CSS to specify a web page’s appearance. There are lots and lots of CSS properties that enable you to determine a web page’s appearance.
+
+
 3.2.4 用MVC设计模式理解Web三大国际标准的分工
+
 未完待续
 3.3 面向对象的现代序设计语言
-为驯服JavaScript这头函数式面向对象的现代语言，熟悉语言的一些重要机制，特编写了三个案例：testAnimation 、testHttp 、testPerformance 。
+原文：[7] p500-501
+In the 1970s, the designers of the SmallTalk programming language addressed this convoluted-code problem by coining the term object-oriented programming and making it a core part of their new programming language.
+The goal of the OOP paradigm is to have programs model how regular people think about a problem and its solution. When thinking about a problem, people tend to focus on the things that make up the problem. With OOP, those things are called objects. Usually, they’re physical entities, but they can also be conceptual entities. As an OOP programmer, once you have identified the things you want to model, you identify their basic properties and behaviors. You group each thing’s properties and behaviors together into a coherent structure called an object. In writing an OOP program, you define objects, create them, and have them interact with each other.
+One of the cornerstone features of OOP is encapsulation. In general, encapsulation is when something is wrapped up inside a protective covering. When applied to objects, encapsulation means that an object’s data is protected by being hidden inside the object. With hidden data, the rest of the program cannot access an object’s data directly; the rest of the program relies on the object’s methods to access the data. Accessing an object’s data refers either to reading the data or to modifying it. Assuming that an object’s methods are well written, the methods ensure that data is accessed in an appropriate manner. By limiting access to “appropriate” access, that makes it harder to mess up a program’s data, and that leads to fewer bugs. 
+
+为驯服JavaScript这头函数式面向对象的现代语言，熟悉这门现代OOP语言的一些重要机制，我们在写毕设项目前，特编写了三个案例：testAnimation 、testHttp 、testPerformance 。
 3.3.1 数据类型和数据结构
 未完待续
 3.3.2 函数和作用域
@@ -86,11 +104,37 @@
 3.3.3 对象、实例、继承
 未完待续
 3.3.4 DOM的事件驱动的异步代码技术
-未完待续
+
 3.3.5 图像、音视频对象的的Web API
 未完待续
-3.3.6 当代互联网和HTTP对象的API
-未完待续
+3.3.6 互联网的本质和Web服务
+原文：[6] p164
+“The Internet only provides packet transport; all other services run in hosts that attach to the Internet.”
+Keeping services separate from the packet delivery mechanism was a stroke of genius. At the time the Internet was designed, the largest communication system in the world, the telephone system, had taken the opposite approach. Telephones were incredibly basic devices. All the intelligence was built into the switches that formed the telephone network. Engineers called the phone “dumb” and switches “smart.” Many networking researchers assumed the same design would be used to build computer networks. However, the Internet designers foresaw a better approach in which the network only provided packet delivery and all the intelligence was placed in hosts that connected to the network.
+[6] p164我的综述：
+互联网本质上只提供包传送服务，所有在互联网上的其他服务都只是运行在联网的计算机内的程序而已，而不管那些服务是多么复杂的电子商务服务或未来的虚拟现实元宇宙。
+让互联网的服务与底层的包传送机制无关，这个设计是成就互联网的神来之笔。在人们最初设计互联网时，全球最大的通讯系统是电话网络，电话网络的服务设计其实与互联网完全相反，电话作为最底层通讯设备，其他上层智能的服务都建立在电话交换机中，而这些电话交换机则组成了电话网络的基础，工程师通常把电话机称为“傻子设备”而把交换机称为“智能设备”，当然这种设计让基于电话网络的增值服务成本极高，也难以设计新的服务。本来行业内的人认为计算机网络也会走互联网的老路，但是，互联网的设计者创新了一套新的设计，也就是网络本身仅提供包传送，而其他服务是运行在联网的主机内部的通讯程序，这些程序的底层必须使用互联网的包传送机制实现沟通。
+原文：[6] p164
+The Internet’s flexibility has enabled new services to appear and old services to disappear without any change to the Internet itself. For example, the World Wide Web wasn’t around when the Internet was invented. In fact, those of us who participated in Internet research had used the Internet for ten years before the World Wide Web was invented. Interestingly, the Internet did not need to change to accommodate the Web because web sites consist of software that runs in hosts, not in the network. Similarly, browsers that access web sites run in user’s devices, not inside the Internet.
+[6] p164我的综述：
+互联网的这套机制让互联网服务设计显得非常灵活，我们可以不对互联网自身作任何更改，而去开创新的服务，废弃旧的服务。比如互联网诞生十多年了，而我们的Web服务还没出现，即使是研究互联网的人也不知道会有Web这么神奇的服务，更神奇的是，互联网无需作任何改变，就可以适应全球Web服务的所有需要，我们要做的只不过是一些联网的主机运行一些包含Web站点的软件而已，而这些软件可不是寄宿在互联网上的。同样，访问这些Web信息的浏览器也是运行在用户设备的软件，浏览器也不需要存放在互联网基础设施内。
+原文：[6] p165
+Communication across the Internet always occurs between a pair of apps. An app that offers a service is called a server, and an app that accesses a service is called a client.
+[6] p165我的综述：
+任何互联网的通讯都可以简单地看作二台安装了一对应用的计算机的通讯，这二个应用提供服务的一方就是服务器（server），而接受服务的一方则是客户端（client）。
+原文：[6] p207
+One of the most widely used Internet services: the World Wide Web. This chapter introduces the concept of hypermedia, and describes how documents are linked together. The next chapters explain web documents and some of the more advanced web technologies .
+Like all Internet services, the World Wide Web is not built into the Internet. Instead, the service runs on computers attached to the Internet, and follows the client server form of interaction explained in Chapter 15. Many web servers attached to the Internet store information. To access the information, a user launches a web browser.The browser acts as a client that contacts one or more servers to obtain the requested information, which it then displays for the user.
+[6] p207我的综述：
+大多数人会混用互联网和Web的概念，本节我将论述清楚这两个概念，互联网是当代的通讯基础设施，而Web是互联网最为广泛的服务，没有之一，所谓the World Wide Web，简称 Web， Web为解决人类的传统的媒体的不足，提出了超媒体（hypermedia）的概念，描述了数字文档可以如何有机链接，从而为人类提供主动灵活的咨讯服务。Web与其他的互联网服务一样，它不是直接建立在互联网基础设施之内的，而是以程序的形式运行在与互联网相连的计算机之中。这些联入网的计算机被软件控制而实现服务端和客户端模式互动。一些计算机被设定为web服务器，其中存放了人们需要的大量信息，而广大的用户的计算机则使用web浏览器来访问这些信息。因此，Web浏览器如同客户经纪人那样，会代表我们的完成所有细节工作，比如：先利用通讯协议获取信息，然后再把这些信息整理、美化后，再呈现到人们的面前。[7] p207
+原文：[6] p207
+The information on a web server is divided into web pages, and a browser fetches one page at a time. In most cases, a given web server stores a set of related pages, and we use the term web site to refer to the entire collection of pages on a server.
+[6] p207我的综述：
+web服务器内的信息一般由很多网页组成，每次访问浏览器一次获取一个文件，Web服务器都存储了相关的文件集合，我们称这些文件和页面的集合为网站。
+原文：[6] p214
+The World Wide Web, which has become the most widely used Internet service, is a hypermedia system that allows a user to follow links from one web page to another.Each web page is stored on a server, and a link can cross from one server to another.The resulting system appears to be a seamless interconnection of web pages. Each web page is identified by a URL that specifies a web server and a specific item on the server.
+World Wide Web 已经成为互联网服务最广泛的应用，这也是一套超媒体系统，允许用户用跳转链接来自主选择信息，而链接则可以跨越全球的联网计算机。最终整个Web可以看作一个无缝链接的文档资源的集合，而每个文档又可以被URL标识出来，URL由服务器和内部的文件细节表达，能做到全球唯一。
+
 4. **Web应用系统的分析与设计
 未完待续
 4.1 **需求分析
@@ -138,11 +182,11 @@
 7.3 展望未来
 未完待续
 8. 参考文献
-[1]教育部. 教育部关于印发《本科毕业论文（设计）抽检办法（试行）》的通知.[EB/OL]. https://www.gov.cn/zhengce/zhengceku/2021-01/07/content_5577651.htm . 2020.12.24
-[2]W3C. W3C's history. W3C Community. [EB/OL]. https://www.w3.org/about/. 2023.12.20
-[3]Matti Tedre, Peter J.Denning. Computational Thinking, A Professional and Historical Perspective. Computational Thinking in Education A Pedagogical Perspective[C]. Routledge Taylor & Francis Group.2022:1-17
-[4]Behrouz Forouzan. Foundations of Computer Science[M](4th Edition). Cengage Learning EMEA,2018
-[5]Martina Seidl, Marion Scholz, et al. UML @ Classroom An Introduction to Object-Oriented Modeling[M]. Springer International Publishing Switzerland 2015
-[6]Douglas E. Comer. The Internet Book[M](Fifth Edition). CRC Press Taylor & Francis Group,2019
-[7]John Dean,PhD. Web programming with HTML5,CSS,and JavaScript[M].  Jones & Bartlett Learning,LLC,2019
-[8]mozilla. Resources for Developers, by Developers. [EB/OL]. https://developer.mozilla.org/en-US/ 2023.12
+[1] 教育部. 教育部关于印发《本科毕业论文（设计）抽检办法（试行）》的通知.[EB/OL]. https://www.gov.cn/zhengce/zhengceku/2021-01/07/content_5577651.htm . 2020.12.24
+[2] W3C. W3C's history. W3C Community. [EB/OL]. https://www.w3.org/about/. 2023.12.20
+[3] Matti Tedre, Peter J.Denning. Computational Thinking, A Professional and Historical Perspective. Computational Thinking in Education A Pedagogical Perspective[C]. Routledge Taylor & Francis Group.2022:1-17
+[4] Behrouz Forouzan. Foundations of Computer Science[M](4th Edition). Cengage Learning EMEA,2018
+[5] Martina Seidl, Marion Scholz, et al. UML @ Classroom An Introduction to Object-Oriented Modeling[M]. Springer International Publishing Switzerland 2015
+[6] Douglas E. Comer. The Internet Book[M](Fifth Edition). CRC Press Taylor & Francis Group,2019
+[7] John Dean,PhD. Web programming with HTML5,CSS,and JavaScript[M].  Jones & Bartlett Learning,LLC,2019
+[8] mozilla. Resources for Developers, by Developers. [EB/OL]. https://developer.mozilla.org/en-US/ 2023.12

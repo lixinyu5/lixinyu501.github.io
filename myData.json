@@ -252,10 +252,10 @@
       "pdf" : "WebProgrammingWithHtml5CssAndJavascript.pdf" ,
       "type" :  "audio" , 
        "bookPage" : "lesson/webProgramming.jpg" , 
-      "URL" :  "WebProgramming"  ,  
+      "URL" :  "mp3/WebProgramming/"  ,  
       "files" : [] ,
       "chapters" : [ ] 
-      } ,
+         } ,
      {  "name" : "Version Control with Git " ,
      "pdf" : "GitMasteringVersionControl(LearningPath).pdf" ,
       "type" :  "audio" , 

@@ -174,29 +174,6 @@ Plan.createMyUI = function(){
 		Model.bookIsOpen = true ;
 		$('mediaUI').style.display = 'block' ;
      
-/* 对UI设计更改如下，JS代码作出相应调整和优化
-      <div id = "mediaUI">
-       <button id="prevMedia">Prev</button> 
-       <button id="playPause">Play | Pause</button> 
-       <button id="duration">000</button>
-       <button id="nextMedia">Next</button> 
-      </div>
-** 按HTML对UI的设计，已经在Model中为本书设定一个fileIndex属性，
-**用来记录当前打开的音视频编号，该代码已经在myInit中添加
-**首次打开书，默认打开第一个媒体文件，即Model.fileIndex 为 0
-*/
-/**
- * 本版程序整理了“打开本书”按钮的逻辑，再次组织内部了代码：
- * 1、在 !Model.bookIsOpen（“打开本书”） 逻辑模块中，增加了playVideoBook()、playAudioBook() 函数
- *    ，并在这二个函数中处理UI的反馈。
- * 2、PlayVideoBook()和playAudioBook() 函数，调用mediaPlayer(mediaDom , url) 播放音视频文件，
- *    mediaPlayer内部实现对音视频的的具体异步控制和UI反馈。
- * 3、在这个逻辑模块中，还组织了playPause的点击事件代码，用于播放或暂停媒体。
- * 4、仍然在在这个逻辑模块中，增加了用于本书内容导航二个按钮的事件代码，即：prevMedia和nextMedia。
- * 5、prevMedia和nextMedia内，管理了Model.fileIndex的定位，调用了playVideoBook()、playAudioBook()来播放媒体。
- * 6、本版实现的playAudioBook() 函数，完成了弹出列表式菜单的设计部署，并更改了相应的CSS代码，实现了对教学音频较好的视觉反馈和定位互动效果。
- * 7、本项目的myData.json数据中，对audio类书的chapters数据，仅输入了模拟了CS这一本书，其他数据还有待输入。
- */
   if(book.type === 'video'){ 
 	playVideoBook() ;
   }  //视频书结束
@@ -217,7 +194,7 @@ function playAudioBook(){
 	 $('bookMenu').style.display = 'block' ;  
     let url = book.URL + book.files[i] ;
 	 mediaPlayer($('myA') , url) ;
-	// UI.log($('statusInfo'), book.name +" 的课程 ！") ;
+	
 	let dadDom = $("bookMenu") ;
 		dadDom.textContent = "" ;
 	if( chapters.length){
@@ -240,8 +217,11 @@ function playAudioBook(){
   function mediaPlayer(mediaDom , url){  
 		mediaDom.style.display = 'block' ;     
 		mediaDom.src = url ; //这条语句将开启音视频漫长的加载过程
-	
-		mediaDom.addEventListener('loadedmetadata',function(){
+	 //为计算和反馈音视频的响应时间，在此我们使用新建立的timer模型
+	     timer.begin('mediaLoad:' + url)
+	     //timer.begin('mediaMeta') ;
+	     mediaDom.addEventListener('loadedmetadata',function(){
+		  //console.log("读取media元数据时间：" + 	timer.end('mediaMeta') +'ms!' );
 		  let m = Math.floor(this.duration/60) ;
 		  let s = Math.ceil(this.duration - parseInt(this.duration/60)*60) ;
 		  let bak = $('statusInfo').textContent ;
@@ -253,11 +233,17 @@ function playAudioBook(){
 		}); //获取了视频的元数据信息
 	   
 		mediaDom.addEventListener('canplaythrough',function(){
-		  UI.log($('statusInfo'), '读取教学音/视频完成，点Play播放！');
+		  let costTime =  timer.end('mediaLoad:' + url)  ;
+		//在console后台调试时，timer.end只有在读第一次视频时不会报错，而随着媒体文件跳转增多，报错的次数也依次增加，这通过timer.history属性可以很清楚的到结论：调用每次切换媒体时，调用timer.end次数与跳转媒体的次数相同。或许这点非常让人困惑，我们在逻辑上只能推断系统对系统缓存过的媒体文件都会产生 canplaythrough 事件。
+		  UI.log($('statusInfo'), '您等了 ' + costTime + ' 毫秒完成教学音/视频加载，可点Play播放了！');
+		  
 		  this.style.width = UI.deviceWidth + 'px' ;
 		 
 		  Model.clock = setInterval(() => {
-			  let leftTime = parseInt(mediaDom.duration - mediaDom.currentTime) ;
+			  let leftTime  = 0 ;
+			  if(mediaDom.duration && mediaDom.currentTime){ //加上这个条件，是适应低网速和大尺寸的媒体，避免频繁输出NaN信息间隔时间，造成duration输出造成用户困惑的问题
+			    leftTime = parseInt(mediaDom.duration - mediaDom.currentTime) ;
+			   }
 			  UI.log($('duration'), leftTime + ' s ');
 			 }, 1000);
 		}); //End canplaythrough

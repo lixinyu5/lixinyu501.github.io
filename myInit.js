@@ -165,7 +165,40 @@ var httpLoader = {
        }//end of callback	     
       },//end _request method
 	 } ; //End httpLoader 
-	 
+
+ //这是一个毫秒计时器模型，该模型可以同时并行记录多个事件的发生经历的时间，开发者可以用字符串（msg）作为时钟的唯一标识，进行操作。原理简述如下：当timer.begin(msg)运行开启计时，timer.clock记录一个时钟对象，而timer.end(msg)用于结束该标识的计时，返回毫秒级别的时间差，同时把相应的时钟对象删除。
+//注意：当错误地使用timer计时器时，比如end方法的msg写错，后台会抛出（throw）参数错误这类严重的警告，当发生此类错误时，作为开发者必须查看调用timer.begin和timer.end代码的msg，此时的timer不能正常来测算同步代码的时间。而不会影星timer检测异步代码的执行时间！
+var timer = { 
+     history : [] ,
+     stamps : [] ,
+     begin : function(msg){
+              let beginTime = new Date() - 0 ;
+              let beginLable = msg ;
+              this.stamps.push( {beginLable , beginTime } ) ;
+              this.history.push('begin:' + msg);
+            }, // end of timer.begin
+     end :  function(msg){
+              this.history.push('end:'+ msg)
+              let endTime = new Date() - 0 ;
+              let stamps = this.stamps ;
+              let bak = null ;
+             for (let i=0 ; i < stamps.length ; i++ ){ 
+    //通过开始标签找到的开始计时的时间戳对象，下面设计一个简单的交换算法，完成计时后，再将其从timer.stamps数组中删除。
+               if ( stamps[i].beginLable === msg ){
+                   bak = stamps[i] ;
+                   stamps[i] = stamps[stamps.length - 1] ;
+                   stamps.pop();
+                }
+               }
+               this.stamps = stamps ;
+               if(bak){
+                 return endTime - bak.beginTime ;
+               }else{
+                 throw("你错误地使用了timer.end方法，请查看参数："+ msg ); 
+               }
+            }//end of timer.end
+      } ;//end of timer
+
  
      function $(ele){
         if (typeof ele !== 'string'){
